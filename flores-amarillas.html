@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flores amarillas · 21 de septiembre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky-top:#1c1944;
+  --sky-mid:#573872;
+  --sky-low:#d97a58;
+  --gold:#f7c531;
+  --gold-deep:#e0950f;
+  --paper:#fff4cc;
+  --ink:#3a2a14;
+  --on-sky:#fff7e3;
+  --hill:#1f2b21;
+  --serif:"Instrument Serif", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --sans:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --paper:#fff1c0; --on-sky:#fff5dc; }
+}
+:root[data-theme="dark"]{ --paper:#fff1c0; --on-sky:#fff5dc; }
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100svh;
+  background:var(--sky-top);
+  background-image:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 58%,var(--sky-low) 100%);
+  background-attachment:fixed;
+  color:var(--on-sky);
+  font-family:var(--sans);
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+body.locked{overflow:hidden}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;transition:opacity .4s linear}
+main{position:relative;z-index:1}
+section{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(1.5rem,5vw,4rem) 1.25rem;text-align:center}
+:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:6px}
+
+/* Intro */
+#intro{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;
+  background:radial-gradient(ellipse at 50% 60%,rgba(87,56,114,.55),rgba(28,25,68,.96) 70%);transition:opacity 1.1s ease}
+#intro.gone{opacity:0;pointer-events:none}
+#intro p.lead{font-family:var(--serif);font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.1;max-width:18ch}
+#intro p.sub{font-size:.95rem;opacity:.75}
+.bud{background:none;border:0;cursor:pointer;width:clamp(120px,32vw,170px);aspect-ratio:1;animation:float 3.4s ease-in-out infinite}
+.bud svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 24px rgba(247,197,49,.55))}
+.bud .pt{transform-box:fill-box;transform-origin:50% 100%;transition:transform .9s cubic-bezier(.2,.9,.3,1.3)}
+.bud.open .pt{transform:scale(1.25)}
+.bud.open{animation:none;transform:scale(1.4);transition:transform .9s ease}
+@keyframes float{50%{transform:translateY(-10px) rotate(3deg)}}
+
+/* Hero */
+.hero{justify-content:flex-end;padding-bottom:max(3svh,env(safe-area-inset-bottom));pointer-events:none}
+.hero .inner{opacity:0;transform:translateY(12px);transition:opacity 1.6s ease,transform 1.6s ease}
+.hero.show .inner{opacity:1;transform:none}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,6.5vw,4.6rem);line-height:1;text-shadow:0 2px 24px rgba(20,12,40,.7)}
+.hero .date{font-family:var(--serif);font-style:italic;font-size:clamp(1.1rem,2.6vw,1.5rem);margin-top:.35rem;color:var(--gold)}
+.hero .hint{font-size:.85rem;opacity:.8;margin-top:.9rem}
+
+/* Carta */
+.card{position:relative;max-width:36rem;width:100%;background:var(--paper);color:var(--ink);text-align:left;
+  padding:clamp(1.6rem,5vw,3.2rem);border-radius:4px 4px 22px 4px;transform:rotate(-.8deg);
+  box-shadow:0 30px 60px -20px rgba(20,10,40,.6),0 0 0 1px rgba(224,149,15,.25) inset}
+.card .pressed{position:absolute;width:74px;right:-18px;top:-26px;transform:rotate(18deg);opacity:.95}
+.card h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.9rem,4.4vw,2.5rem);margin-bottom:1rem}
+.card p{font-family:var(--serif);font-size:clamp(1.18rem,2.5vw,1.38rem);line-height:1.55;margin-bottom:.9rem}
+.card .rest{visibility:hidden}
+.card .sign{margin-top:1.4rem;font-style:italic;text-align:right}
+
+/* Contador */
+.counter p{font-family:var(--serif);font-size:clamp(1.5rem,4vw,2.5rem);line-height:1.35;max-width:24ch;text-shadow:0 2px 18px rgba(20,12,40,.6)}
+.counter b{font-weight:400;color:var(--gold);font-variant-numeric:tabular-nums;display:inline-block;min-width:1.2ch}
+
+/* Girasol */
+.sun h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.9rem,5vw,3rem);margin-bottom:.4rem}
+.sun .help{opacity:.8;font-size:.95rem;margin-bottom:1rem}
+#sun{width:min(82vw,430px);height:auto;overflow:visible;touch-action:manipulation}
+.petal{cursor:pointer;transform-box:fill-box;transform-origin:50% 100%;
+  transition:transform 1s cubic-bezier(.3,.6,.3,1),opacity 1s ease,filter .2s}
+.petal:hover,.petal:focus-visible{filter:brightness(1.12)}
+.petal:focus-visible{outline:none;stroke:#fff;stroke-width:2}
+.petal.gone{transform:translateY(-60px) rotate(40deg) scale(.7);opacity:0;pointer-events:none}
+#status{font-family:var(--serif);font-size:clamp(1.8rem,4.6vw,2.6rem);color:var(--gold);min-height:1.3em;margin:.6rem 0 1rem}
+.row{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+.btn{font:600 1rem var(--sans);background:var(--gold);color:var(--ink);border:0;border-radius:999px;padding:.8rem 1.4rem;cursor:pointer;
+  box-shadow:0 8px 24px -8px rgba(247,197,49,.7);transition:transform .15s}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:transparent;color:var(--on-sky);box-shadow:inset 0 0 0 1.5px rgba(255,247,227,.55)}
+[hidden]{display:none!important}
+
+/* Final */
+.end{justify-content:flex-end;padding-bottom:max(7svh,env(safe-area-inset-bottom))}
+.end h2{font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,8vw,5.4rem);line-height:1;text-shadow:0 2px 24px rgba(20,12,40,.6)}
+.end p{margin-top:1rem;opacity:.85;max-width:32ch;line-height:1.5}
+.end .count{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:1.4rem;opacity:1}
+
+/* Música */
+#music{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;z-index:5;font:500 .85rem var(--sans);color:var(--on-sky);
+  background:rgba(28,25,68,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,247,227,.25);
+  border-radius:999px;padding:.55rem .95rem;cursor:pointer;display:flex;align-items:center;gap:.5rem}
+#music .eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+#music .eq i{width:3px;background:var(--gold);border-radius:2px;height:4px;animation:eq 1s ease-in-out infinite}
+#music .eq i:nth-child(2){animation-delay:.2s}#music .eq i:nth-child(3){animation-delay:.4s}
+#music[aria-pressed="false"] .eq i{animation:none;height:3px;opacity:.5}
+@keyframes eq{50%{height:12px}}
+
+@media (prefers-reduced-motion: reduce){
+  .bud{animation:none}
+  .hero .inner,.petal{transition-duration:.01s}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body class="locked">
+
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<div id="intro" role="dialog" aria-label="Inicio">
+  <button class="bud" id="bud" aria-label="Abrir la sorpresa">
+    <svg viewBox="-60 -60 120 120" aria-hidden="true">
+      <defs>
+        <radialGradient id="bg1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f2b313"/></radialGradient>
+      </defs>
+      <g fill="url(#bg1)">
+        <ellipse class="pt" cx="0" cy="-24" rx="15" ry="26" transform="rotate(0)"/>
+        <ellipse class="pt" cx="0" cy="-24" rx="15" ry="26" transform="rotate(72)"/>
+        <ellipse class="pt" cx="0" cy="-24" rx="15" ry="26" transform="rotate(144)"/>
+        <ellipse class="pt" cx="0" cy="-24" rx="15" ry="26" transform="rotate(216)"/>
+        <ellipse class="pt" cx="0" cy="-24" rx="15" ry="26" transform="rotate(288)"/>
+      </g>
+      <circle r="13" fill="#a4561a"/><circle r="7" fill="#6e3610"/>
+    </svg>
+  </button>
+  <p class="lead" id="introLead">Tengo algo para ti</p>
+  <p class="sub">Toca la flor (sube el volumen)</p>
+</div>
+
+<button id="music" aria-pressed="false" hidden><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLabel">Música</span></button>
+
+<main>
+  <section class="hero" id="hero">
+    <div class="inner">
+      <h1 id="title">Flores amarillas</h1>
+      <p class="date">21 de septiembre</p>
+      <p class="hint">Toca el cielo o la tierra para dejar más flores. Desliza para seguir.</p>
+    </div>
+  </section>
+
+  <section class="letter">
+    <article class="card" id="card">
+      <svg class="pressed" viewBox="-60 -60 120 120" aria-hidden="true">
+        <g fill="#f5bf22" opacity=".9">
+          <ellipse cx="0" cy="-26" rx="13" ry="26"/><ellipse cx="0" cy="-26" rx="13" ry="26" transform="rotate(60)"/>
+          <ellipse cx="0" cy="-26" rx="13" ry="26" transform="rotate(120)"/><ellipse cx="0" cy="-26" rx="13" ry="26" transform="rotate(180)"/>
+          <ellipse cx="0" cy="-26" rx="13" ry="26" transform="rotate(240)"/><ellipse cx="0" cy="-26" rx="13" ry="26" transform="rotate(300)"/>
+        </g><circle r="12" fill="#9a4f16"/>
+      </svg>
+      <h2 id="salute"></h2>
+      <div id="letterBody"></div>
+      <p class="sign" id="sign"></p>
+    </article>
+  </section>
+
+  <section class="sun">
+    <h2>¿Me quiere o no me quiere?</h2>
+    <p class="help">Toca los pétalos uno por uno.</p>
+    <svg id="sun" viewBox="-130 -130 260 260" role="group" aria-label="Girasol con 21 pétalos">
+      <defs>
+        <linearGradient id="pg" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#e0950f"/><stop offset=".55" stop-color="#f7c531"/><stop offset="1" stop-color="#ffe070"/>
+        </linearGradient>
+        <radialGradient id="disk"><stop offset="0" stop-color="#7a4514"/><stop offset="1" stop-color="#3f2208"/></radialGradient>
+      </defs>
+      <g id="petals"></g>
+      <circle r="44" fill="url(#disk)"/>
+      <g id="seeds"></g>
+    </svg>
+    <p id="status" aria-live="polite">&nbsp;</p>
+    <div class="row">
+      <button class="btn" id="pluckBtn">Quitar un pétalo</button>
+      <button class="btn ghost" id="resetBtn" hidden>Otra vez</button>
+    </div>
+  </section>
+
+  <section class="end">
+    <h2>Feliz 21 de septiembre</h2>
+    <p id="endMsg">Las flores del árbol se fueron a escribir tu nombre. Toca el cielo o la tierra y deja más.</p>
+    <p class="count" id="count" hidden></p>
+  </section>
+</main>
+
+<script>
+/* ============ PERSONALIZA AQUÍ ============
+   También funciona por URL: ?para=Ana&de=Luis
+*/
+const CONFIG = {
+  para: "Florenina",
+  de: "Sebas",
+  mensaje: [
+    "Hoy es 21 de septiembre y, como manda la tradición, te tocan flores amarillas. No encontré una floristería que abriera dentro de una pantalla, así que las hice yo, una por una, con código.",
+    "Y la verdad, tu nombre ya empieza con flor, así que este día siempre fue un poquito tuyo.",
+    "Tal vez no soy la persona más perfecta. A veces me equivoco y a veces no encuentro las palabras correctas, pero hay algo que en mi corazón tengo clarísimo: te quiero mucho.",
+    "Te quiero por todos esos momentos especiales y bonitos que hemos vivido, por las risas, por las pláticas y por lo fácil que se vuelve todo cuando estoy contigo.",
+    "Pasar tiempo contigo se volvió una de mis cosas favoritas, y lo único que quiero es seguir sumando más. Más días, más momentos y más recuerdos a tu lado.",
+    "Cada flor de ese árbol es un momento contigo que me hizo sonreír. Y aun así me quedé corto de flores.",
+    "Gracias por estar. Feliz 21 de septiembre."
+  ]
+};
+(() => {
+  const q = new URLSearchParams(location.search);
+  ["para","de"].forEach(k => { if (q.get(k)) CONFIG[k] = q.get(k); });
+  if (q.get("msg")) CONFIG.mensaje = q.get("msg").split("|");
+})();
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Textos ---------- */
+document.getElementById("title").textContent = "Flores amarillas para " + CONFIG.para;
+document.getElementById("introLead").textContent = "Tengo algo para " + (CONFIG.para.length < 18 ? CONFIG.para : "ti");
+document.getElementById("salute").textContent = "Para " + CONFIG.para + ",";
+document.getElementById("sign").textContent = "Con cariño, " + CONFIG.de;
+const letterBody = document.getElementById("letterBody");
+const paras = CONFIG.mensaje.map(txt => {
+  const p = document.createElement("p");
+  const a = document.createElement("span"), b = document.createElement("span");
+  b.className = "rest"; b.textContent = txt; b.setAttribute("aria-hidden","true");
+  p.append(a, b); p.setAttribute("aria-label", txt); letterBody.append(p);
+  return { a, b, txt };
+});
+function typeLetter(){
+  if (reduced){ paras.forEach(p => { p.a.textContent = p.txt; p.b.textContent = ""; }); return; }
+  let i = 0, c = 0;
+  const tick = () => {
+    if (i >= paras.length) return;
+    const p = paras[i]; c++;
+    p.a.textContent = p.txt.slice(0, c); p.b.textContent = p.txt.slice(c);
+    if (c >= p.txt.length){ i++; c = 0; setTimeout(tick, 380); }
+    else setTimeout(tick, /[.,]/.test(p.txt[c-1]) ? 180 : 26);
+  };
+  tick();
+}
+new IntersectionObserver((es, ob) => { if (es[0].isIntersecting){ typeLetter(); ob.disconnect(); } }, { threshold: .35 })
+  .observe(document.getElementById("card"));
+
+
+/* ---------- Canvas ---------- */
+const cv = document.getElementById("scene"), ctx = cv.getContext("2d");
+let W, H, dpr, s, cx, cy, groundY, trunkTop;
+const PALETTE = ["#ffd23f", "#f7c531", "#ffb81c", "#ffe066", "#f5a623"];
+const PETAL_COLS = ["#ffd23f", "#f7c531", "#ffc21a", "#ffe27a"];
+function mulberry(a){ return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const easeOutBack = x => { const c1 = 1.7, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const easeOut = x => 1 - Math.pow(1 - x, 3);
+
+function makeSprite(n, outer, inner){
+  const S = 96, c = document.createElement("canvas"); c.width = c.height = S;
+  const g = c.getContext("2d"); g.translate(S/2, S/2);
+  const rx = n <= 5 ? 14 : n <= 6 ? 12 : 9;
+  const grad = g.createRadialGradient(0, 0, 4, 0, 0, 46);
+  grad.addColorStop(0, inner); grad.addColorStop(1, outer);
+  g.fillStyle = grad; g.strokeStyle = "rgba(170,100,0,.35)"; g.lineWidth = 1;
+  for (let i = 0; i < n; i++){
+    g.save(); g.rotate(i * Math.PI * 2 / n);
+    g.beginPath(); g.ellipse(0, -24, rx, 22, 0, 0, Math.PI * 2); g.fill(); g.stroke(); g.restore();
+  }
+  g.fillStyle = "#a4561a"; g.beginPath(); g.arc(0, 0, 11, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#6e3610";
+  for (let k = 0; k < 40; k++){ const r = 9 * Math.sqrt(k / 40), a = k * 2.39996; g.beginPath(); g.arc(Math.cos(a) * r, Math.sin(a) * r, 1, 0, 7); g.fill(); }
+  return c;
+}
+const sprites = [
+  makeSprite(5, "#f7b50f", "#fff0a0"), makeSprite(6, "#ffc21a", "#fff4b8"),
+  makeSprite(8, "#f5a623", "#ffe27a"), makeSprite(12, "#ffd23f", "#fff6c9")
+];
+const glow = (() => {
+  const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, "rgba(255,236,150,1)"); gr.addColorStop(.25, "rgba(255,210,90,.55)"); gr.addColorStop(1, "rgba(255,200,80,0)");
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return c;
+})();
+
+let branches = [], heart = [], maxDelay = 0, baseCount = 0, glowPts = [];
+const MAXD = 7;
+function genScene(){
+  const rnd = mulberry(921);
+  branches = [];
+  branches.push({ x1: cx, y1: groundY + 6, x2: cx, y2: trunkTop, w: s * .085, d: 0 });
+  const grow = (x, y, a, len, w, d) => {
+    if (d > MAXD) return;
+    const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len;
+    branches.push({ x1: x, y1: y, x2, y2, w, d });
+    const n = d < 3 ? 2 : (rnd() < .3 ? 3 : 2);
+    for (let i = 0; i < n; i++){
+      const sp = .32 + rnd() * .38;
+      const na = a + (i === 0 ? -sp : i === 1 ? sp : (rnd() - .5) * .4);
+      grow(x2, y2, na, len * (.68 + rnd() * .1), w * .66, d + 1);
+    }
+  };
+  grow(cx, trunkTop, -Math.PI / 2 - .5, s * .4, s * .05, 1);
+  grow(cx, trunkTop, -Math.PI / 2 + .5, s * .4, s * .05, 1);
+  grow(cx, trunkTop, -Math.PI / 2, s * .34, s * .045, 2);
+
+  heart = []; maxDelay = 0;
+  const N = W < 600 ? 360 : 620;
+  while (heart.length < N){
+    const x = (rnd() * 2 - 1) * 1.2, y = rnd() * 2.4 - 1.1;
+    const f = Math.pow(x * x + y * y - 1, 3) - x * x * y * y * y;
+    if (f > 0) continue;
+    const px = cx + x * s, py = cy - y * s;
+    const dist = Math.hypot(px - cx, py - trunkTop) / (s * 1.8);
+    const delay = dist * 2200 + rnd() * 500;
+    maxDelay = Math.max(maxDelay, delay);
+    heart.push({ x: px, y: py, tx: px, ty: py, cx: px, cy: py, m: nameTarget, stag: rnd() * 900, arc: (rnd() - .5) * 1.4, spin: (rnd() - .5) * 6, r: s * (.034 + rnd() * .034), rot: rnd() * 6.28, spr: Math.floor(rnd() * sprites.length), ph: rnd() * 6.28, delay });
+  }
+  heart.sort((a, b) => a.r - b.r);
+  baseCount = heart.length;
+  const EX = W < 600 ? 320 : 480;
+  for (let i = 0; i < EX; i++){
+    const o = heart[Math.floor(rnd() * baseCount)];
+    heart.push({ ...o, extra: true, stag: rnd() * 900, arc: (rnd() - .5) * 1.4, spin: (rnd() - .5) * 6, rot: rnd() * 6.28, spr: Math.floor(rnd() * sprites.length), ph: rnd() * 6.28 });
+  }
+  treeCache = null;
+}
+
+let stars = [], flies = [];
+for (let i = 0; i < 90; i++) stars.push({ x: Math.random(), y: Math.random() * .55, r: Math.random() * 1.2 + .3, sp: Math.random() * 2 + .5, ph: Math.random() * 6 });
+for (let i = 0; i < (reduced ? 12 : 36); i++) flies.push({ x: Math.random(), y: .2 + Math.random() * .7, z: Math.random() * 40 + 10, sp: Math.random() + .4, ph: Math.random() * 6, sz: Math.random() * 10 + 8 });
+
+function resize(){
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  s = Math.min(W * .40, H * .25);
+  cx = W / 2; cy = H * .40; groundY = H * .80; trunkTop = cy + s * .38;
+  genScene();
+  if (fontsReady) genNameTargets();
+}
+const hillY = x => { const u = x / W; return groundY + 30 - 120 * u * (1 - u); };
+
+let started = false, t0 = 0, treeCache = null;
+let nameTarget = 0, switchT = 0, fontsReady = false, nameFade = 0;
+function genNameTargets(){
+  if (!heart.length) return;
+  const text = CONFIG.para, oc = document.createElement("canvas");
+  oc.width = Math.ceil(W); oc.height = Math.ceil(H);
+  const g = oc.getContext("2d");
+  const fam = '"Figtree", system-ui, sans-serif';
+  g.font = `800 200px ${fam}`;
+  const fs = Math.min(200 * (W * .88) / g.measureText(text).width, H * .22);
+  g.font = `800 ${fs}px ${fam}`; g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillText(text, W / 2, H * .3);
+  const ow = oc.width, d = g.getImageData(0, 0, ow, oc.height).data;
+  const on = (x, y) => d[(Math.round(y) * ow + Math.round(x)) * 4 + 3] > 128;
+  let filled = 0;
+  for (let y = 0; y < oc.height; y += 2) for (let x = 0; x < ow; x += 2) if (on(x, y)) filled += 4;
+  if (!filled) return;
+  const st = Math.max(2, Math.sqrt(filled / heart.length) * .98);
+  const pts = [];
+  let row = 0;
+  for (let y = st / 2; y < oc.height; y += st * .87, row++)
+    for (let x = (row % 2 ? st / 2 : 0); x < ow; x += st) if (on(x, y)) pts.push([x, y]);
+  for (let i = pts.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [pts[i], pts[j]] = [pts[j], pts[i]]; }
+  heart.forEach((f, i) => {
+    const q = pts[i % pts.length], j = i >= pts.length ? st * .4 : st * .08;
+    f.tx = q[0] + (Math.random() - .5) * j; f.ty = q[1] + (Math.random() - .5) * j;
+    f.nr = st * (.62 + Math.random() * .16);
+  });
+  glowPts = pts.filter((_, i) => i % 5 === 0);
+}
+document.fonts.ready.then(() => { fontsReady = true; genNameTargets(); });
+const TREE_MS = reduced ? 1 : 3800;
+let petals = [], planted = [], bursts = [], plantedCount = 0;
+let px = 0, py = 0;
+addEventListener("pointermove", e => { px = e.clientX / W - .5; py = e.clientY / H - .5; }, { passive: true });
+
+function drawTree(tp){
+  if (treeCache){ ctx.drawImage(treeCache, 0, 0, W, H); return; }
+  ctx.lineCap = "round";
+  for (const b of branches){
+    const st = b.d / (MAXD + 1), p = clamp((tp - st) * (MAXD + 1) / 1.3);
+    if (p <= 0) continue;
+    const k = b.d / MAXD;
+    ctx.strokeStyle = `rgb(${74 + k * 48},${46 + k * 36},${28 + k * 26})`;
+    ctx.lineWidth = Math.max(.7, b.w);
+    ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x1 + (b.x2 - b.x1) * p, b.y1 + (b.y2 - b.y1) * p); ctx.stroke();
+  }
+  if (tp >= 1.4){
+    treeCache = document.createElement("canvas"); treeCache.width = cv.width; treeCache.height = cv.height;
+    const g = treeCache.getContext("2d"); g.scale(dpr, dpr); g.lineCap = "round";
+    for (const b of branches){
+      const k = b.d / MAXD; g.strokeStyle = `rgb(${74 + k * 48},${46 + k * 36},${28 + k * 26})`;
+      g.lineWidth = Math.max(.7, b.w); g.beginPath(); g.moveTo(b.x1, b.y1); g.lineTo(b.x2, b.y2); g.stroke();
+    }
+  }
+}
+function drawFlower(spr, x, y, r, rot){
+  const c = Math.cos(rot) * dpr, sn = Math.sin(rot) * dpr;
+  ctx.setTransform(c, sn, -sn, c, x * dpr, y * dpr);
+  ctx.drawImage(sprites[spr], -r, -r, r * 2, r * 2);
+}
+function spawnPetal(x, y, burst){
+  if (petals.length > (reduced ? 50 : 170)) return;
+  const a = Math.random() * 6.28, sp = burst ? Math.random() * 4 + 1.5 : 0;
+  petals.push({
+    x, y, vx: burst ? Math.cos(a) * sp : (Math.random() - .5) * .4, vy: burst ? Math.sin(a) * sp - 1.5 : Math.random() * .4 + .3,
+    g: burst ? .06 : .004, vmax: Math.random() * .6 + .6, rot: Math.random() * 6.28, vr: (Math.random() - .5) * .08,
+    sz: Math.random() * 3 + 3.5, c: PETAL_COLS[Math.floor(Math.random() * PETAL_COLS.length)], ph: Math.random() * 6.28
+  });
+}
+
+let last = performance.now();
+function frame(now){
+  const dt = Math.min(50, now - last); last = now; const k = dt / 16.67;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+
+  // estrellas
+  ctx.fillStyle = "#fff7e3";
+  for (const st of stars){ ctx.globalAlpha = .25 + .6 * Math.abs(Math.sin(now * .001 * st.sp + st.ph)); ctx.fillRect(st.x * W, st.y * H, st.r, st.r); }
+  ctx.globalAlpha = 1;
+
+  // luciérnagas con paralaje
+  for (const f of flies){
+    const x = f.x * W + Math.sin(now * .0003 * f.sp + f.ph) * 40 + px * f.z;
+    const y = f.y * H + Math.cos(now * .0004 * f.sp + f.ph) * 30 + py * f.z;
+    ctx.globalAlpha = .35 + .65 * Math.pow(Math.abs(Math.sin(now * .0012 * f.sp + f.ph)), 3);
+    ctx.drawImage(glow, x - f.sz, y - f.sz, f.sz * 2, f.sz * 2);
+  }
+  ctx.globalAlpha = 1;
+
+  // colina
+  const hg = ctx.createLinearGradient(0, groundY - 40, 0, H);
+  hg.addColorStop(0, "#2d3d2c"); hg.addColorStop(1, "#141c14");
+  ctx.fillStyle = hg; ctx.beginPath(); ctx.moveTo(0, groundY + 30);
+  ctx.quadraticCurveTo(W / 2, groundY - 30, W, groundY + 30); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+
+  if (started){
+    const tp = (now - t0) / TREE_MS;
+    nameFade += (nameTarget - nameFade) * .04 * k;
+    ctx.globalAlpha = 1 - .82 * nameFade; drawTree(tp); ctx.globalAlpha = 1;
+    const bloomStart = t0 + TREE_MS * .8;
+    if (nameFade > .02 && glowPts.length){
+      ctx.globalAlpha = .16 * nameFade;
+      for (const g of glowPts){ const r = s * .09; ctx.drawImage(glow, g[0] - r, g[1] - r, r * 2, r * 2); }
+      ctx.globalAlpha = 1;
+    }
+    const dir = nameTarget ? 1 : -1, sinceSw = now - switchT;
+    for (const f of heart){
+      const e = (now - bloomStart - f.delay) / (reduced ? 1 : 650);
+      if (sinceSw > (reduced ? 0 : f.stag)) f.m = clamp(f.m + dir * dt / (reduced ? 1 : 1600));
+      if (e <= 0) continue;
+      const sc = e >= 1 ? 1 : easeOutBack(e);
+      const q = f.m < .5 ? 4 * f.m * f.m * f.m : 1 - Math.pow(-2 * f.m + 2, 3) / 2;
+      const sw = Math.sin(now * .0012 + f.ph) * s * .006 * (reduced ? 0 : 1);
+      const x = f.x + (f.tx - f.x) * q + sw * (1 - .85 * q), y = f.y + (f.ty - f.y) * q - Math.sin(q * Math.PI) * s * .5 * f.arc;
+      f.cx = x; f.cy = y;
+      if (f.extra && q <= 0) continue;
+      const rr = f.r * sc + ((f.nr || f.r) - f.r * sc) * q;
+      drawFlower(f.spr, x, y, rr * (f.extra ? Math.min(1, q * 1.5) : 1), f.rot + sw * .03 + q * f.spin);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (now > bloomStart + 400 && Math.random() < (reduced ? .05 : .35) * k * (1 - .65 * nameFade)){
+      const f = heart[Math.floor(Math.random() * baseCount)]; spawnPetal(f.cx, f.cy, false);
+    }
+  }
+
+  // flores plantadas
+  for (const p of planted){
+    const x = p.fx * W, base = hillY(x) + 4, e = clamp((now - p.t) / 1100);
+    const h = p.h * s * easeOut(e), sw = Math.sin(now * .0015 + p.ph) * 4 * e;
+    const tx = x + sw, ty = base - h;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.strokeStyle = "#5a8a3c"; ctx.lineWidth = 2.4; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x, base); ctx.quadraticCurveTo(x + p.bend * h, base - h * .5, tx, ty); ctx.stroke();
+    if (e > .5){ ctx.fillStyle = "#5a8a3c"; ctx.beginPath(); ctx.ellipse(x + p.bend * h * .5 + 6, base - h * .45, 7 * e, 3 * e, -.5, 0, 6.28); ctx.fill(); }
+    const fe = clamp((now - p.t - 900) / 600);
+    if (fe > 0) drawFlower(p.spr, tx, ty, p.r * s * easeOutBack(fe), p.ph + sw * .05);
+  }
+
+  // flores en el cielo que se deshacen en pétalos
+  for (let i = bursts.length - 1; i >= 0; i--){
+    const b = bursts[i], e = now - b.t;
+    if (e > 2200){ for (let j = 0; j < 12; j++) spawnPetal(b.x, b.y, true); bursts.splice(i, 1); continue; }
+    drawFlower(b.spr, b.x, b.y, b.r * easeOutBack(clamp(e / 520)), e * .0006);
+  }
+
+  // pétalos
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const wind = Math.sin(now * .0003) * .45 + .15;
+  for (let i = petals.length - 1; i >= 0; i--){
+    const p = petals[i];
+    p.vy = Math.min(p.vy + p.g * k, p.g > .01 ? 4 : p.vmax);
+    p.vx *= p.g > .01 ? .985 : 1;
+    p.x += (p.vx + wind + Math.sin(now * .0015 + p.ph) * .5) * k;
+    p.y += p.vy * k; p.rot += p.vr * k;
+    if (p.y > H + 20 || p.x > W + 40 || p.x < -40){ petals.splice(i, 1); continue; }
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+    ctx.fillStyle = p.c; ctx.beginPath(); ctx.ellipse(0, 0, p.sz, p.sz * .55, 0, 0, 6.28); ctx.fill();
+    ctx.restore();
+  }
+  requestAnimationFrame(frame);
+}
+resize();
+addEventListener("resize", resize);
+requestAnimationFrame(frame);
+
+/* Scroll: atenúa la escena al leer */
+const setDim = () => { cv.style.opacity = nameTarget ? 1 : 1 - Math.min(scrollY / H, 1) * .45; };
+addEventListener("scroll", setDim, { passive: true });
+new IntersectionObserver(es => {
+  const on = es[0].isIntersecting ? 1 : 0;
+  if (on !== nameTarget){ nameTarget = on; switchT = performance.now(); setDim(); }
+}, { threshold: .55 }).observe(document.querySelector(".end"));
+
+/* Plantar flores */
+const countEl = document.getElementById("count");
+addEventListener("pointerdown", e => {
+  if (!started) return;
+  if (e.target.closest("button, .card, #sun, #intro, a")) return;
+  const x = e.clientX, y = e.clientY;
+  if (y > hillY(x) - 16){
+    planted.push({ fx: x / W, t: performance.now(), h: .16 + Math.random() * .16, r: .06 + Math.random() * .03, bend: (Math.random() - .5) * .5, ph: Math.random() * 6, spr: Math.floor(Math.random() * sprites.length) });
+    if (planted.length > 60) planted.shift();
+  } else {
+    bursts.push({ x, y, t: performance.now(), r: s * (.08 + Math.random() * .04), spr: Math.floor(Math.random() * sprites.length) });
+  }
+  plantedCount++;
+  countEl.hidden = false;
+  countEl.textContent = plantedCount === 1 ? "Ya dejaste 1 flor." : `Ya dejaste ${plantedCount} flores.`;
+});
+
+/* ---------- Música (caja musical generada en vivo) ---------- */
+let actx, master, nextT = 0, step = 0, schedTimer;
+const musicBtn = document.getElementById("music");
+const chords = [[60,64,67,72],[55,59,62,67],[57,60,64,69],[53,57,60,65]];
+const pattern = [0,2,1,3,2,1,3,2];
+const eighth = 60 / 84 / 2;
+function note(m, time, vel){
+  const f = 440 * Math.pow(2, (m - 69) / 12);
+  const o = actx.createOscillator(), o2 = actx.createOscillator(), g = actx.createGain(), g2 = actx.createGain();
+  o.type = "sine"; o.frequency.value = f * 2; o2.type = "triangle"; o2.frequency.value = f * 4; g2.gain.value = .12;
+  g.gain.setValueAtTime(.0001, time); g.gain.exponentialRampToValueAtTime(vel, time + .008); g.gain.exponentialRampToValueAtTime(.0001, time + 1.7);
+  o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master);
+  o.start(time); o2.start(time); o.stop(time + 1.8); o2.stop(time + 1.8);
+}
+function sched(){
+  while (nextT < actx.currentTime + .3){
+    const c = chords[Math.floor(step / 8) % 4];
+    note(c[pattern[step % 8]], nextT, .2);
+    if (step % 8 === 0) note(c[0] - 12, nextT, .14);
+    if (step % 4 === 2 && Math.random() < .45){ const pent = [72,74,76,79,81]; note(pent[Math.floor(Math.random() * 5)] + (Math.random() < .25 ? 12 : 0), nextT + eighth * .5, .08); }
+    nextT += eighth; step++;
+  }
+}
+function startMusic(){
+  try{
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    master = actx.createGain(); master.gain.value = .22;
+    const lp = actx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2600;
+    const dl = actx.createDelay(); dl.delayTime.value = eighth * 3; const fb = actx.createGain(); fb.gain.value = .32;
+    master.connect(lp); master.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(lp); lp.connect(actx.destination);
+    nextT = actx.currentTime + .1; schedTimer = setInterval(sched, 60);
+    musicBtn.hidden = false; musicBtn.setAttribute("aria-pressed", "true"); document.getElementById("musicLabel").textContent = "Pausar música";
+  }catch(e){ musicBtn.hidden = true; }
+}
+musicBtn.addEventListener("click", () => {
+  if (!actx) return;
+  const on = actx.state === "running";
+  on ? actx.suspend() : actx.resume();
+  musicBtn.setAttribute("aria-pressed", String(!on));
+  document.getElementById("musicLabel").textContent = on ? "Poner música" : "Pausar música";
+});
+
+/* ---------- Intro ---------- */
+const bud = document.getElementById("bud"), intro = document.getElementById("intro");
+bud.addEventListener("click", () => {
+  if (started) return;
+  bud.classList.add("open"); startMusic();
+  setTimeout(() => {
+    intro.classList.add("gone"); document.body.classList.remove("locked");
+    started = true; t0 = performance.now();
+    setTimeout(() => document.getElementById("hero").classList.add("show"), reduced ? 0 : TREE_MS * .8 + maxDelay * .7);
+  }, reduced ? 0 : 700);
+});
+
+/* ---------- Girasol: me quiere, no me quiere ---------- */
+const NS = "http://www.w3.org/2000/svg";
+const petalsG = document.getElementById("petals"), seedsG = document.getElementById("seeds");
+const statusEl = document.getElementById("status"), resetBtn = document.getElementById("resetBtn"), pluckBtn = document.getElementById("pluckBtn");
+const TOTAL = 21; let plucked = 0; const sunPetals = [];
+for (let i = 0; i < TOTAL; i++){
+  const g = document.createElementNS(NS, "g"); g.setAttribute("transform", `rotate(${i * 360 / TOTAL})`);
+  const p = document.createElementNS(NS, "path");
+  p.setAttribute("d", "M0,-40 C17,-58 16,-94 0,-118 C-16,-94 -17,-58 0,-40Z");
+  p.setAttribute("fill", "url(#pg)"); p.setAttribute("class", "petal");
+  p.setAttribute("tabindex", "0"); p.setAttribute("role", "button"); p.setAttribute("aria-label", `Pétalo ${i + 1}`);
+  p.addEventListener("click", () => pluck(p));
+  p.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); pluck(p); } });
+  g.append(p); petalsG.append(g); sunPetals.push(p);
+}
+for (let n = 1; n < 320; n++){
+  const r = 41 * Math.sqrt(n / 320), a = n * 2.399963;
+  const c = document.createElementNS(NS, "circle");
+  c.setAttribute("cx", (Math.cos(a) * r).toFixed(2)); c.setAttribute("cy", (Math.sin(a) * r).toFixed(2));
+  c.setAttribute("r", (1.1 + n / 320 * .9).toFixed(2)); c.setAttribute("fill", n % 3 ? "#2e1805" : "#b06a1e");
+  seedsG.append(c);
+}
+function pluck(p){
+  if (p.classList.contains("gone")) return;
+  p.classList.add("gone"); plucked++;
+  if (plucked === TOTAL){
+    statusEl.textContent = "Me quiere. Muchísimo.";
+    pluckBtn.hidden = true; resetBtn.hidden = false;
+    const r = document.getElementById("sun").getBoundingClientRect();
+    for (let j = 0; j < 70; j++) spawnPetal(r.left + r.width / 2, r.top + r.height / 2, true);
+  } else {
+    statusEl.textContent = plucked % 2 ? "Me quiere" : "No me quiere";
+  }
+}
+pluckBtn.addEventListener("click", () => {
+  const left = sunPetals.filter(p => !p.classList.contains("gone"));
+  if (left.length) pluck(left[Math.floor(Math.random() * left.length)]);
+});
+resetBtn.addEventListener("click", () => {
+  sunPetals.forEach(p => p.classList.remove("gone")); plucked = 0;
+  statusEl.innerHTML = "&nbsp;"; pluckBtn.hidden = false; resetBtn.hidden = true;
+});
+
+document.addEventListener("visibilitychange", () => { if (actx && document.hidden && actx.state === "running"){ actx.suspend(); actx._auto = true; } else if (actx && !document.hidden && actx._auto){ actx.resume(); actx._auto = false; } });
+</script>
+</body>
+</html>
